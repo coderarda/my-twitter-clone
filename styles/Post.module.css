@@ -1,8 +1,33 @@
+.username {
+    margin-left: 5px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.name {
+    margin-left: 10px;
+    font-weight: bold;
+}
+
 .userSegment {
-    padding: 5px;
-    text-align: start;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
 }
 
 .description {
-    padding: 10px
+    position: absolute;
+    margin-top: 1.3rem;
+    margin-left: 2.6rem;
+}
+
+.postRoot {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 20px 0 40px 20px;
+    border-bottom: 1px solid gray;
+}
+
+.profilePic {
+    border-radius: 50%;
 }

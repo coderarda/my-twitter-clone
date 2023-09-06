@@ -8,7 +8,8 @@
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/react-navigation-menu": "^1.1.3",
     "@radix-ui/react-scroll-area": "^1.0.4",
-    "@types/node": "^20.5.8",
+    "@types/node": "*",
+    "mongoose": "^7.5.0",
     "next": "12.2.3",
     "react": "^18",
     "react-dom": "^18",
@@ -18,7 +19,7 @@
     "@types/react": "^18",
     "bun-framework-next": "^12.2",
     "react-refresh": "0.10.0",
-    "typescript": "latest"
+    "typescript": "^5.2.2"
   },
   "module": "index.js"
 }
