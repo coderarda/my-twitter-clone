@@ -37,6 +37,7 @@ function MyApp({ Component, pageProps }) {
                 </NavigationMenu.List>
             </NavigationMenu.Root>
             <Component {...pageProps} />
+            <div className="sidebar"></div>
         </div>
     );
 }

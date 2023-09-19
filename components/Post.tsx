@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { User } from "shared/User";
+import type { User } from "shared/User";
 import styles from "styles/Post.module.css";
 
 interface PostProps {

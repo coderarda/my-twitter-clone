@@ -26,7 +26,6 @@ export default function Home({ }) {
                             </ScrollArea.Scrollbar>
                         </ScrollArea.Root>
                     </div>
-                    <div className={styles.sidebar}></div>
                 </div>
             </main>
         </>

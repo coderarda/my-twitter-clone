@@ -20,6 +20,7 @@ body {
 
 .navMenu {
     width: fit-content;
+    margin-left: 15%;
 }
 
 .navbarList { 
@@ -40,6 +41,12 @@ body {
     color: inherit;
     font-size: 20px;
     text-decoration: none;
+}
+
+.sidebar {
+    border-left: 1px solid gray;
+    margin-right: 30%;
+    height: 100vh;
 }
 
 .link[data-active] {
