@@ -2,10 +2,9 @@ import Head from "next/head";
 import React from "react";
 import styles from "../styles/Home.module.css";
 import { HomeHeader } from "components/HomeHeader";
-import { Feed } from "components/Feed";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 
-export default function Home({ }) {
+export default function Home() {
     return (
         <>
             <Head>
@@ -19,7 +18,6 @@ export default function Home({ }) {
                         <HomeHeader />
                         <ScrollArea.Root>
                             <ScrollArea.Viewport>
-                                <Feed />
                             </ScrollArea.Viewport>
                             <ScrollArea.Scrollbar>
                                 <ScrollArea.Thumb />

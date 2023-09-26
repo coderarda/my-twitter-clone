@@ -1,21 +1,17 @@
-import Image from "next/image";
-import type { User } from "shared/User";
 import styles from "styles/Post.module.css";
+import img from "public/blank-profile-pic.webp";
+import Image from "next/image";
+import { PostProps } from "shared/PostProps";
 
-interface PostProps {
-    description: string;
-    user: User;
-}
-
-export function Post(props: PostProps) {
+export function Post({ post, user }: PostProps) {
     return (
         <div className={styles.postRoot}>
             <div className={styles.userSegment}>
-                <Image width={30} height={30} src={props.user.profilePic} className={styles.profilePic}></Image>
-                <span className={styles.name}>{props.user.name}</span>
-                <span className={styles.username}>{"@" + props.user.username}</span>
+                <Image width={30} height={30} src={img} className={styles.profilePic}></Image>
+                <span className={styles.name}>{user.name}</span>
+                <span className={styles.username}>{"@" + user.username}</span>
             </div>
-            <span className={styles.description}>{props.description}</span>
+            <span className={styles.description}>{post.postContent}</span>
         </div>
     );
 }

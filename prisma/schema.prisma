@@ -7,31 +7,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model mainposts {
+model FeedPosts {
   postId       Int            @id @unique(map: "postId_UNIQUE") @default(autoincrement())
   postContent  String         @db.VarChar(45)
   postDate     DateTime       @default(now()) @db.DateTime(0)
   User_userId  Int
-  user         user           @relation(fields: [User_userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "fk_MainPosts_User")
-  repliedposts repliedposts[]
+  user         User           @relation(fields: [User_userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "fk_MainPosts_User")
+  repliedposts PostReplies[]
 
   @@index([User_userId], map: "fk_MainPosts_User_idx")
 }
 
-model repliedposts {
+model PostReplies {
   postId           Int       @id @unique(map: "postId_UNIQUE") @default(autoincrement())
   PostContent      String    @db.VarChar(45)
   RepliedPostDate  DateTime  @default(now()) @db.DateTime(0)
   MainPosts_postId Int
-  mainposts        mainposts @relation(fields: [MainPosts_postId], references: [postId], onDelete: NoAction, onUpdate: NoAction, map: "fk_RepliedPosts_MainPosts1")
+  mainposts        FeedPosts @relation(fields: [MainPosts_postId], references: [postId], onDelete: NoAction, onUpdate: NoAction, map: "fk_RepliedPosts_MainPosts1")
 
   @@index([MainPosts_postId], map: "fk_RepliedPosts_MainPosts1_idx")
 }
 
-model user {
+model User {
   userId    Int         @id @unique(map: "idtable1_UNIQUE") @default(autoincrement())
   name      String      @db.VarChar(45)
   lastname  String      @db.VarChar(45)
   username  String      @db.VarChar(45)
-  mainposts mainposts[]
+  mainposts FeedPosts[]
 }
