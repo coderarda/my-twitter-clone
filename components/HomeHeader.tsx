@@ -1,7 +1,7 @@
 import styles from "../styles/HomeHeader.module.css";
 
 export function HomeHeader() {
-    return(
+    return (
         <div className={styles.rootDiv}>
             <span className={styles.headerText}>Home</span>
         </div>
