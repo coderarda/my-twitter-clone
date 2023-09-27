@@ -1,9 +1,9 @@
 import styles from "styles/Post.module.css";
 import img from "public/blank-profile-pic.webp";
 import Image from "next/image";
-import { PostProps } from "shared/PostProps";
+import { User } from "@prisma/client";
 
-export function Post({ post, user }: PostProps) {
+export function Post({ title, user }: { title: string; user: User }) {
     return (
         <div className={styles.postRoot}>
             <div className={styles.userSegment}>
@@ -11,7 +11,7 @@ export function Post({ post, user }: PostProps) {
                 <span className={styles.name}>{user.name}</span>
                 <span className={styles.username}>{"@" + user.username}</span>
             </div>
-            <span className={styles.description}>{post.postContent}</span>
+            <span className={styles.description}>{title}</span>
         </div>
     );
 }

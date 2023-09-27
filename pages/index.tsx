@@ -3,8 +3,24 @@ import React from "react";
 import styles from "../styles/Home.module.css";
 import { HomeHeader } from "components/HomeHeader";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
+import { FeedPosts, PrismaClient, Prisma } from "@prisma/client";
+import { GetStaticProps } from "next";
+import { Post } from "components/Post";
 
-export default function Home() {
+const PostWithUser = Prisma.validator<Prisma.FeedPostsInclude>()({ user: true });    
+
+export const getStaticProps: GetStaticProps<{ posts: FeedPosts[] }> = async function () {
+    const prisma = new PrismaClient();
+    const posts = await prisma.feedPosts.findMany({ include: PostWithUser });
+
+    return {
+        props: {
+            posts: posts,
+        }
+    }
+}
+
+export default function Home({ posts }: { posts: Prisma.FeedPostsGetPayload<{ include: { user: true }}>[]}) {    
     return (
         <>
             <Head>
@@ -18,6 +34,9 @@ export default function Home() {
                         <HomeHeader />
                         <ScrollArea.Root>
                             <ScrollArea.Viewport>
+                                {posts.map((post) => {
+                                    return <Post user={post.user} title={post.postContent}></Post>
+                                })}
                             </ScrollArea.Viewport>
                             <ScrollArea.Scrollbar>
                                 <ScrollArea.Thumb />
