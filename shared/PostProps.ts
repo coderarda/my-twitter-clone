@@ -1,4 +1,4 @@
-import { FeedPosts, User } from '@prisma/client'
+import type { FeedPosts } from '@prisma/client'
 
 export interface PostProps {
     posts: FeedPosts[];

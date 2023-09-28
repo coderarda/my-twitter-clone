@@ -1,4 +1,4 @@
-import { FeedPosts, PrismaClient, User } from "@prisma/client";
+import { FeedPosts, PrismaClient, Users } from "@prisma/client";
 import { Post } from "components/Post";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { ParsedUrlQuery } from "querystring";
@@ -25,18 +25,18 @@ export const getStaticPaths: GetStaticPaths<PageParams> = async function () {
     }
 }
 
-export const getStaticProps: GetStaticProps<{ post: FeedPosts, user: User }> = async function (ctx) {
+export const getStaticProps: GetStaticProps<{ post: FeedPosts, user: Users }> = async function (ctx) {
     const params = ctx.params as PageParams;
     const post = await prisma.feedPosts.findUnique({ where: { postId: parseInt(params.id) }});
 
     return {
         props: {
             post: post, 
-            user: await prisma.user.findUnique({ where: { userId: post.User_userId }}),
+            user: await prisma.users.findUnique({ where: { userId: post.User_userId }}),
         }
     };
 }
 
-export default function Page({ post, user }: { post: FeedPosts, user: User }) {
+export default function Page({ post, user }: { post: FeedPosts, user: Users }) {
     return <Post title={post.postContent} user={user}></Post>
 }

@@ -12,7 +12,7 @@ model FeedPosts {
   postContent  String         @db.VarChar(45)
   postDate     DateTime       @default(now()) @db.DateTime(0)
   User_userId  Int
-  user         User           @relation(fields: [User_userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "fk_MainPosts_User")
+  user         Users           @relation(fields: [User_userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "fk_MainPosts_User")
   repliedposts PostReplies[]
 
   @@index([User_userId], map: "fk_MainPosts_User_idx")
@@ -28,7 +28,7 @@ model PostReplies {
   @@index([MainPosts_postId], map: "fk_RepliedPosts_MainPosts1_idx")
 }
 
-model User {
+model Users {
   userId    Int         @id @unique(map: "idtable1_UNIQUE") @default(autoincrement())
   name      String      @db.VarChar(45)
   lastname  String      @db.VarChar(45)

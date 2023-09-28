@@ -3,24 +3,35 @@ import React from "react";
 import styles from "../styles/Home.module.css";
 import { HomeHeader } from "components/HomeHeader";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
-import { FeedPosts, PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { GetStaticProps } from "next";
 import { Post } from "components/Post";
 
-const PostWithUser = Prisma.validator<Prisma.FeedPostsInclude>()({ user: true });    
 
-export const getStaticProps: GetStaticProps<{ posts: FeedPosts[] }> = async function () {
+// TODO: convert date to string before sending props
+
+type PostsWithUser = Prisma.FeedPostsGetPayload<{ include: { user: true }}>;
+type PostWithStringDate = Omit<PostsWithUser, "postDate"> & { postDate: string };
+
+export const getStaticProps: GetStaticProps<{ posts: PostWithStringDate[] }> = async function () {
     const prisma = new PrismaClient();
-    const posts = await prisma.feedPosts.findMany({ include: PostWithUser });
+    const posts = await prisma.feedPosts.findMany({ include: { user: true } });
+    const postsWithStrDate = posts.map((post) => {
+        const newPost: PostWithStringDate = {
+            ...post,
+            postDate: post.postDate.toUTCString(),
+        }
+        return newPost;
+    })
 
     return {
         props: {
-            posts: posts,
+            posts: postsWithStrDate,
         }
     }
 }
 
-export default function Home({ posts }: { posts: Prisma.FeedPostsGetPayload<{ include: { user: true }}>[]}) {    
+export default function Home({ posts }: { posts: PostsWithUser[] }) {    
     return (
         <>
             <Head>
@@ -34,8 +45,8 @@ export default function Home({ posts }: { posts: Prisma.FeedPostsGetPayload<{ in
                         <HomeHeader />
                         <ScrollArea.Root>
                             <ScrollArea.Viewport>
-                                {posts.map((post) => {
-                                    return <Post user={post.user} title={post.postContent}></Post>
+                                {posts.map((post, idx) => {
+                                    return <Post user={post.user} key={idx} title={post.postContent}></Post>
                                 })}
                             </ScrollArea.Viewport>
                             <ScrollArea.Scrollbar>
