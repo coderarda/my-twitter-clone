@@ -32,7 +32,7 @@ export default function Home({ posts }: { posts: PostsWithUser[] }) {
     return (
         <>
             <Head>
-                <title>Twitter Clone</title>
+                <title>Zwit</title>
             </Head>
             <main className={styles.mainRoot}>
                 <div className={styles.home}>

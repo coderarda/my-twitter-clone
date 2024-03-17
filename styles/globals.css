@@ -19,6 +19,7 @@ body {
 }
 
 .navMenu {
+    width: -moz-fit-content;
     width: fit-content;
     margin-left: 15%;
 }
