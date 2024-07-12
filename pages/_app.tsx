@@ -1,8 +1,9 @@
 import { useRouter } from "next/router";
 import "../styles/globals.css";
 import * as NavigationMenu from "@radix-ui/react-navigation-menu";
+import { AppProps } from "next/app";
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
     const router = useRouter();
     let str = router.pathname;
 

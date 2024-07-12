@@ -18,6 +18,15 @@
 .homeFeed {
     width: 100%;
     display: flex;
+    height: 100%;
     flex-direction: column;
+    justify-content: flex-start;
 }
 
+.scroll-area {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-start;
+    height: 100%;
+}

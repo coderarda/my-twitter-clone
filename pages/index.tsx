@@ -6,6 +6,7 @@ import * as ScrollArea from "@radix-ui/react-scroll-area";
 import { PrismaClient, Prisma } from "@prisma/client";
 import { GetStaticProps } from "next";
 import { Post } from "components/Post";
+import AddButton from "components/AddButton";
 
 type PostsWithUser = Prisma.FeedPostsGetPayload<{ include: { user: true }}>;
 type PostWithStringDate = Omit<PostsWithUser, "postDate"> & { postDate: string };
@@ -38,15 +39,17 @@ export default function Home({ posts }: { posts: PostsWithUser[] }) {
                 <div className={styles.home}>
                     <div className={styles.homeFeed}>
                         <HomeHeader />
-                        <ScrollArea.Root>
-                            <ScrollArea.Viewport>
+                        <ScrollArea.Root style={{ height:"100%" }}>
+                            <ScrollArea.Viewport className={styles['scroll-area']}>
                                 {posts.map((post, idx) => {
                                     return <Post user={post.user} key={idx} title={post.postContent}></Post>
                                 })}
                             </ScrollArea.Viewport>
+                            <AddButton />
                             <ScrollArea.Scrollbar>
                                 <ScrollArea.Thumb />
                             </ScrollArea.Scrollbar>
+                            <ScrollArea.Corner />
                         </ScrollArea.Root>
                     </div>
                 </div>

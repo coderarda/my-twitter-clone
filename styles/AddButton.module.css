@@ -1,0 +1,12 @@
+.add-btn-root {
+    height: 50px;
+    width: 50px;
+    outline: none;
+    border: none;
+    background: turquoise;
+    position: absolute;
+    right: 0;
+    bottom: 5px;
+    margin: 15px;
+    border-radius: 50%;
+}
