@@ -13,5 +13,6 @@
             "database": "mysql",
             "username": "ardaa"
         }
-    ]
+    ],
+    "prisma.pinToPrisma6": false
 }

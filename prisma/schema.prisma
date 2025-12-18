@@ -3,14 +3,13 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
 }
 
 model FeedPosts {
-  postId       Int            @id @unique(map: "postId_UNIQUE") @default(autoincrement())
+  postId       Int            @id @default(autoincrement())
   postContent  String         @db.VarChar(45)
-  postDate     DateTime       @default(now()) @db.DateTime(0)
+  postDate     DateTime       @default(now())
   User_userId  Int
   user         Users           @relation(fields: [User_userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "fk_MainPosts_User")
   repliedposts PostReplies[]
@@ -19,9 +18,9 @@ model FeedPosts {
 }
 
 model PostReplies {
-  postId           Int       @id @unique(map: "postId_UNIQUE") @default(autoincrement())
+  postId           Int       @id @default(autoincrement())
   PostContent      String    @db.VarChar(45)
-  RepliedPostDate  DateTime  @default(now()) @db.DateTime(0)
+  RepliedPostDate  DateTime  @default(now())
   MainPosts_postId Int
   mainposts        FeedPosts @relation(fields: [MainPosts_postId], references: [postId], onDelete: NoAction, onUpdate: NoAction, map: "fk_RepliedPosts_MainPosts1")
 
@@ -29,9 +28,13 @@ model PostReplies {
 }
 
 model Users {
-  userId    Int         @id @unique(map: "idtable1_UNIQUE") @default(autoincrement())
-  name      String      @db.VarChar(45)
-  lastname  String      @db.VarChar(45)
-  username  String      @db.VarChar(45)
-  mainposts FeedPosts[]
+  userId       Int         @id @default(autoincrement())
+  name         String      @db.VarChar(45)
+  lastname     String      @db.VarChar(45)
+  username     String      @unique @db.VarChar(45)
+  email        String      @unique @db.VarChar(255)
+  passwordHash String      @db.VarChar(255)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  mainposts    FeedPosts[]
 }

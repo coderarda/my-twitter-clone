@@ -2,12 +2,13 @@ import { FeedPosts, PrismaClient, Users } from "@prisma/client";
 import { Post } from "components/Post";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { ParsedUrlQuery } from "querystring";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 interface PageParams extends ParsedUrlQuery {
     id: string;
 }
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL || "" }) });
 
 export const getStaticPaths: GetStaticPaths<PageParams> = async function () {
     const paths = Array.from<any, { params: PageParams }>({ length: await prisma.feedPosts.count() }, (_, idx) => {

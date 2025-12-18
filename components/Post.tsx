@@ -2,8 +2,9 @@ import styles from "styles/Post.module.css";
 import img from "public/blank-profile-pic.webp";
 import Image from "next/image";
 import type { Users } from "@prisma/client";
+import { memo } from "react";
 
-export function Post({ title, user }: { title: string; user: Users }) {
+export const Post = memo(function Post({ title, user }: { title: string; user: Users }) {
     return (
         <div className={styles.postRoot}>
             <div className={styles.userSegment}>
@@ -14,4 +15,4 @@ export function Post({ title, user }: { title: string; user: Users }) {
             <span className={styles.description}>{title}</span>
         </div>
     );
-}
+});
