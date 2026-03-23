@@ -1,6 +1,6 @@
 .username {
     margin-left: 5px;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-muted);
 }
 
 .name {
@@ -15,9 +15,10 @@
 }
 
 .description {
-    position: absolute;
-    margin-top: 1.3rem;
+    margin-top: 1rem;
     margin-left: 2.6rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .postRoot {
@@ -25,9 +26,52 @@
     flex-direction: column;
     justify-content: flex-start;
     padding: 20px 0 40px 20px;
-    border-bottom: 1px solid gray;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+}
+
+.postRoot:hover {
+    background-color: var(--hover-bg-color);
 }
 
 .profilePic {
     border-radius: 50%;
+}
+
+.actionsSegment {
+    display: flex;
+    gap: 15px;
+    padding-top: 2rem;
+    margin-left: 2.6rem;
+}
+
+.action {
+    cursor: pointer;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    font-size: inherit;
+    font-family: inherit;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s ease;
+}
+
+.action:hover {
+    color: var(--text-primary);
+}
+
+.action:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.liked {
+    color: rgb(249, 24, 128);
+}
+
+.liked:hover {
+    color: rgb(249, 24, 128);
 }

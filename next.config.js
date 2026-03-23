@@ -7,4 +7,7 @@ module.exports = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
+  turbopack: {
+    root: __dirname
+  }
 };

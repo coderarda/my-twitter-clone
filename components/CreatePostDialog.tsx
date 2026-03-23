@@ -3,6 +3,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import styles from "../styles/CreatePostDialog.module.css";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 export function CreatePostDialog() {
     const [open, setOpen] = useState(false);
@@ -10,6 +11,7 @@ export function CreatePostDialog() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+    const { data: session } = useSession();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -25,7 +27,7 @@ export function CreatePostDialog() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ 
-                    content: content.trim(),
+                    content: content,
                 }),
             });
 
@@ -60,41 +62,69 @@ export function CreatePostDialog() {
             <Dialog.Portal>
                 <Dialog.Overlay className={styles.overlay} />
                 <Dialog.Content className={styles.content}>
-                    <Dialog.Title className={styles.title}>Create a post</Dialog.Title>
-                    <Dialog.Description className={styles.description}>
-                        Share what's on your mind
-                    </Dialog.Description>
-                    {error && <div className={styles.error}>{error}</div>}
-                    <form onSubmit={handleSubmit}>
-                        <textarea
-                            className={styles.textarea}
-                            placeholder="What's happening?"
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                            rows={4}
-                            maxLength={280}
-                            autoFocus
-                        />
-                        <div className={styles.footer}>
-                            <span className={styles.charCount}>
-                                {content.length}/280
-                            </span>
-                            <div className={styles.actions}>
-                                <Dialog.Close asChild>
-                                    <button type="button" className={styles.btnCancel}>
-                                        Cancel
+                    {session ? (
+                        <>
+                            <Dialog.Title className={styles.title}>Create a post</Dialog.Title>
+                            <Dialog.Description className={styles.description}>
+                                Share what's on your mind
+                            </Dialog.Description>
+                            {error && <div className={styles.error}>{error}</div>}
+                            <form onSubmit={handleSubmit}>
+                                <textarea
+                                    className={styles.textarea}
+                                    placeholder="What's happening?"
+                                    value={content}
+                                    onChange={(e) => setContent(e.target.value)}
+                                    rows={4}
+                                    maxLength={280}
+                                    autoFocus
+                                />
+                                <div className={styles.footer}>
+                                    <span className={styles.charCount}>
+                                        {content.length}/280
+                                    </span>
+                                    <div className={styles.actions}>
+                                        <Dialog.Close asChild>
+                                            <button type="button" className={styles.btnCancel}>
+                                                Cancel
+                                            </button>
+                                        </Dialog.Close>
+                                        <button 
+                                            type="submit" 
+                                            className={styles.btnSubmit}
+                                            disabled={!content.trim() || isSubmitting}
+                                        >
+                                            {isSubmitting ? "Posting..." : "Post"}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </>
+                    ) : (
+                        <>
+                            <Dialog.Title className={styles.title}>Sign in to post</Dialog.Title>
+                            <Dialog.Description className={styles.description}>
+                                You need to be signed in to create a post.
+                            </Dialog.Description>
+                            <div className={styles.footer}>
+                                <div />
+                                <div className={styles.actions}>
+                                    <Dialog.Close asChild>
+                                        <button type="button" className={styles.btnCancel}>
+                                            Cancel
+                                        </button>
+                                    </Dialog.Close>
+                                    <button 
+                                        type="button" 
+                                        className={styles.btnSubmit}
+                                        onClick={() => router.push('/auth/signin')}
+                                    >
+                                        Sign In
                                     </button>
-                                </Dialog.Close>
-                                <button 
-                                    type="submit" 
-                                    className={styles.btnSubmit}
-                                    disabled={!content.trim() || isSubmitting}
-                                >
-                                    {isSubmitting ? "Posting..." : "Post"}
-                                </button>
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                        </>
+                    )}
                     <Dialog.Close asChild>
                         <button className={styles.iconButton} aria-label="Close">
                             <Cross2Icon />

@@ -1,6 +1,7 @@
 import styles from "../styles/HomeHeader.module.css";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function HomeHeader() {
     const { data: session } = useSession();
@@ -12,12 +13,9 @@ export function HomeHeader() {
                 {session ? (
                     <div className={styles.userInfo}>
                         <span className={styles.userName}>{session.user?.name || session.user?.email}</span>
-                        <button 
-                            onClick={() => signOut({ callbackUrl: '/auth/signin' })}
-                            className={styles.authButton}
-                        >
-                            Sign Out
-                        </button>
+                        <Link href="/auth/account" className={styles.authButton}>
+                            Account
+                        </Link>
                     </div>
                 ) : (
                     <Link href="/auth/signin" className={styles.authButton}>

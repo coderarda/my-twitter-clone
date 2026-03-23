@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "FeedPosts" ALTER COLUMN "postContent" SET DATA TYPE VARCHAR(280);

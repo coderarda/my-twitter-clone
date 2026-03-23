@@ -45,5 +45,5 @@ export const getStaticProps: GetStaticProps<{ post: FeedPosts, user: Users | nul
 }
 
 export default function Page({ post, user }: { post: FeedPosts, user: Users }) {
-    return <Post title={post.postContent} user={user}></Post>
+    return <Post postId={post.postId} title={post.postContent} user={user}></Post>
 }

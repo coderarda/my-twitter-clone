@@ -3,53 +3,60 @@ import React from "react";
 import styles from "../styles/Home.module.css";
 import { HomeHeader } from "components/HomeHeader";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
-import { PrismaClient, Prisma, FeedPosts } from "@prisma/client";
-import { GetServerSideProps } from "next";
+import { Prisma } from "@prisma/client";
+import { GetStaticProps } from "next";
 import { Post } from "components/Post";
 import { CreatePostDialog } from "components/CreatePostDialog";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../auth";
+// Session is obtained client-side via next-auth hooks when needed
 import { prisma } from "../lib/prisma";
 
-type PostsWithUser = Prisma.FeedPostsGetPayload<{ include: { user: true }}>;
-type PostWithStringDate = Omit<PostsWithUser, "postDate" | "user"> & { 
+type PostsWithRelations = Prisma.FeedPostsGetPayload<{ include: { user: true, likes: true } }>;
+type PostWithStringDate = Omit<PostsWithRelations, "postDate" | "user" | "likes"> & {
     postDate: string;
-    user: Omit<PostsWithUser["user"], "createdAt" | "updatedAt"> & { createdAt: string; updatedAt: string };
+    user: Omit<PostsWithRelations["user"], "createdAt" | "updatedAt"> & { createdAt: string; updatedAt: string };
+    likeCount: number;
+    likedByIds: number[];
 };
 
-export const getServerSideProps: GetServerSideProps<{ posts: PostWithStringDate[] }> = async function (context) {
-    const session = await getServerSession(context.req, context.res, authOptions);
-    
+export const getStaticProps: GetStaticProps<{ posts: PostWithStringDate[] }> = async function () {
     // Allow viewing posts without authentication
     // Users can still sign in to post content
 
-    const posts = await prisma.feedPosts.findMany({ 
-        include: { user: true },
+    const postsWithLikes = await prisma.feedPosts.findMany({ 
+        include: { 
+            user: true,
+            likes: true,
+        },
         orderBy: { postDate: 'desc' },
         take: 50
     });
-    const postsWithStrDate = posts.map((post: PostsWithUser) => {
+    
+    const postsWithStrDate = postsWithLikes.map((post) => {
+        const { likes, user, postDate, ...rest } = post;
         const newPost: PostWithStringDate = {
-            ...post,
-            postDate: post.postDate.toUTCString(),
+            ...rest,
+            postDate: postDate.toUTCString(),
             user: {
-                ...post.user,
-                createdAt: post.user.createdAt.toUTCString(),
-                updatedAt: post.user.updatedAt.toUTCString(),
-            }
-        }
+                ...user,
+                createdAt: user.createdAt.toUTCString(),
+                updatedAt: user.updatedAt.toUTCString(),
+            },
+            likeCount: likes.length,
+            likedByIds: likes.map((l) => l.userId),
+        };
         return newPost;
     })
 
     return {
         props: {
             posts: postsWithStrDate,
-            session: JSON.parse(JSON.stringify(session)),
-        }
+        },
+        // Revalidate at most once every 60 seconds (ISR)
+        revalidate: 60,
     }
 }
 
-export default function Home({ posts }: { posts: PostsWithUser[] }) {    
+export default function Home({ posts }: { posts: PostWithStringDate[] }) {    
     return (
         <>
             <Head>
@@ -62,7 +69,14 @@ export default function Home({ posts }: { posts: PostsWithUser[] }) {
                         <ScrollArea.Root style={{ height:"100%" }}>
                             <ScrollArea.Viewport className={styles['scroll-area']}>
                                 {posts.map((post) => {
-                                    return <Post user={post.user} key={post.postId} title={post.postContent}></Post>
+                                    return <Post 
+                                        user={post.user} 
+                                        key={post.postId} 
+                                        title={post.postContent}
+                                        postId={post.postId}
+                                        initialLikeCount={post.likeCount}
+                                        likedByIds={post.likedByIds}
+                                    ></Post>
                                 })}
                             </ScrollArea.Viewport>
                             <ScrollArea.Scrollbar>

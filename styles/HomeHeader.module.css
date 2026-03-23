@@ -11,7 +11,7 @@
     padding: 20px;
     padding-bottom: 40px;
     padding-left: 15px;
-    border-bottom: 1px solid gray;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .authSection {
@@ -28,12 +28,12 @@
 
 .userName {
     font-size: 14px;
-    color: #666;
+    color: var(--text-muted);
 }
 
 .authButton {
     padding: 8px 16px;
-    background-color: #1d9bf0;
+    background-color: var(--accent-color);
     color: white;
     border: none;
     border-radius: 20px;
@@ -46,4 +46,23 @@
 
 .authButton:hover {
     background-color: #1a8cd8;
+}
+
+.themeToggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.themeToggle:hover {
+    background-color: rgba(29, 155, 240, 0.1);
+    border-color: var(--accent-color);
 }

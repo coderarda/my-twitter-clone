@@ -8,23 +8,36 @@ datasource db {
 
 model FeedPosts {
   postId       Int            @id @default(autoincrement())
-  postContent  String         @db.VarChar(45)
+  postContent  String         @db.VarChar(280)
   postDate     DateTime       @default(now())
   User_userId  Int
   user         Users           @relation(fields: [User_userId], references: [userId], onDelete: NoAction, onUpdate: NoAction, map: "fk_MainPosts_User")
   repliedposts PostReplies[]
+  likes        Likes[]
 
   @@index([User_userId], map: "fk_MainPosts_User_idx")
 }
 
 model PostReplies {
   postId           Int       @id @default(autoincrement())
-  PostContent      String    @db.VarChar(45)
+  PostContent      String    @db.VarChar(280)
   RepliedPostDate  DateTime  @default(now())
   MainPosts_postId Int
   mainposts        FeedPosts @relation(fields: [MainPosts_postId], references: [postId], onDelete: NoAction, onUpdate: NoAction, map: "fk_RepliedPosts_MainPosts1")
 
   @@index([MainPosts_postId], map: "fk_RepliedPosts_MainPosts1_idx")
+}
+
+model Likes {
+  likeId   Int       @id @default(autoincrement())
+  userId   Int
+  postId   Int
+  createdAt DateTime @default(now())
+  user     Users     @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  post     FeedPosts @relation(fields: [postId], references: [postId], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, postId])
+  @@index([postId])
 }
 
 model Users {
@@ -37,4 +50,5 @@ model Users {
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   mainposts    FeedPosts[]
+  likes        Likes[]
 }
