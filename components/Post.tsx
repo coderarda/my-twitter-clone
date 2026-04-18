@@ -2,9 +2,11 @@ import styles from "styles/Post.module.css";
 import img from "public/blank-profile-pic.webp";
 import Image from "next/image";
 import type { Users } from "@prisma/client";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { ChatBubbleIcon, HeartIcon, PaperPlaneIcon, Share1Icon } from "@radix-ui/react-icons";
-import { useSession } from "next-auth/react";
+import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 interface PostComponentProps {
     postId: number;
@@ -15,23 +17,16 @@ interface PostComponentProps {
     isLikedByUser?: boolean;
 }
 
-export function Post({ postId, title, user, initialLikeCount = 0, likedByIds = [], isLikedByUser = false }: PostComponentProps) {
-    const { data: session } = useSession();
+export function Post({ postId, title, user, initialLikeCount = 0, isLikedByUser = false }: PostComponentProps) {
+    const { isSignedIn } = useUser();
+    const router = useRouter();
     const [likeCount, setLikeCount] = useState(initialLikeCount);
     const [isLiked, setIsLiked] = useState(isLikedByUser);
     const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        if (!session?.user?.id) return;
-        const userIdNum = Number(session.user.id);
-        if (Number.isNaN(userIdNum)) return;
-        const liked = likedByIds.includes(userIdNum);
-        setIsLiked(liked);
-    }, [session?.user?.id, likedByIds]);
-
     const handleLike = useCallback(async () => {
-        if (!session) {
-            alert('Please sign in to like posts');
+        if (!isSignedIn) {
+            router.push('/auth/signin');
             return;
         }
 
@@ -75,16 +70,18 @@ export function Post({ postId, title, user, initialLikeCount = 0, likedByIds = [
         } finally {
             setIsLoading(false);
         }
-    }, [postId, session, isLiked]);
+    }, [postId, isSignedIn, isLiked, router]);
 
     return (
         <div className={styles.postRoot}>
             <div className={styles.userSegment}>
                 <Image alt="" width={30} height={30} src={img} className={styles.profilePic}></Image>
                 <span className={styles.name}>{user.name + " " + user.lastname}</span>
-                <span className={styles.username}>{"@" + user.username}</span>
+                <Link className={styles.username} href={`/profile/${user.username}`}>{"@" + user.username}</Link>
             </div>
-            <span className={styles.description}>{title}</span>
+            <Link href={`/post/${postId}`} className={styles.postLink}>
+                <span className={styles.description}>{title}</span>
+            </Link>
             <div className={styles.actionsSegment}>
                 <button 
                     className={`${styles.action} ${isLiked ? styles.liked : ''}`}
@@ -94,7 +91,7 @@ export function Post({ postId, title, user, initialLikeCount = 0, likedByIds = [
                 >
                     <HeartIcon /> <span>{likeCount > 0 ? likeCount : 'Like'}</span>
                 </button>
-                <span className={styles.action}><ChatBubbleIcon /> Comment</span>
+                <Link href={`/post/${postId}`} className={styles.action}><ChatBubbleIcon /> Comment</Link>
                 <span className={styles.action}><Share1Icon /> Share</span>
                 <span className={styles.action}><PaperPlaneIcon /> ReZwit</span>
             </div>

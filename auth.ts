@@ -2,7 +2,6 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
-import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient({ 
     adapter: new PrismaPg({ 
@@ -19,7 +18,7 @@ export const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials) {
-                if (!credentials?.email || !credentials?.password) {
+                if (!credentials?.email) {
                     return null;
                 }
 
@@ -28,15 +27,6 @@ export const authOptions: NextAuthOptions = {
                 });
 
                 if (!user) {
-                    return null;
-                }
-
-                const isPasswordValid = await bcrypt.compare(
-                    credentials.password as string,
-                    user.passwordHash
-                );
-
-                if (!isPasswordValid) {
                     return null;
                 }
 

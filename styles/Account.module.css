@@ -1,4 +1,6 @@
 .container {
+    --account-card-bg: #ffffff;
+    --account-error-text: #f4212e;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -10,10 +12,112 @@
     background: var(--bg-color);
 }
 
+:global([data-theme="dark"]) .container {
+    --account-card-bg: #16181c;
+    --account-error-text: #ff6b76;
+}
+
+@media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme])) .container {
+        --account-card-bg: #16181c;
+        --account-error-text: #ff6b76;
+    }
+}
+
 .title {
     margin: 0;
     color: var(--text-primary);
     font-weight: 700;
+}
+
+.infoCard {
+    width: 100%;
+    max-width: 640px;
+    background: var(--account-card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 20px;
+}
+
+.infoTitle {
+    margin: 0 0 16px;
+    color: var(--text-primary);
+    font-size: 20px;
+}
+
+.infoGrid {
+    display: grid;
+    gap: 10px;
+}
+
+.infoRow {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    gap: 14px;
+    align-items: start;
+}
+
+.label {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.value {
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+.input {
+    width: 100%;
+    max-width: 340px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text-primary);
+    background: var(--bg-color);
+    font-size: 14px;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.saveButton {
+    margin-top: 14px;
+    min-width: 120px;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    background: #1d9bf0;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.saveButton:hover:not(:disabled) {
+    background: #188cd8;
+}
+
+.saveButton:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.meta {
+    margin: 14px 0 0;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.error {
+    margin: 10px 0 0;
+    color: var(--account-error-text);
+    font-size: 13px;
 }
 
 .signOutButton {
@@ -31,4 +135,19 @@
 
 .signOutButton:hover {
     background: #d81b28;
+}
+
+@media (max-width: 680px) {
+    .container {
+        padding: 32px 20px;
+    }
+
+    .infoRow {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    .input {
+        max-width: 100%;
+    }
 }

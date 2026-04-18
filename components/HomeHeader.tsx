@@ -1,18 +1,18 @@
 import styles from "../styles/HomeHeader.module.css";
-import { useSession, signOut } from "next-auth/react";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 
-export function HomeHeader() {
-    const { data: session } = useSession();
+export function HomeHeader({ pageTitle }: { pageTitle: string }) {
+    const { user, isSignedIn } = useUser();
 
     return (
         <div className={styles.rootDiv}>
-            <span className={styles.headerText}>Home</span>
+            <span className={styles.headerText}>{pageTitle}</span>
             <div className={styles.authSection}>
-                {session ? (
+                {isSignedIn ? (
                     <div className={styles.userInfo}>
-                        <span className={styles.userName}>{session.user?.name || session.user?.email}</span>
+                        <span className={styles.userName}>{user?.fullName || user?.primaryEmailAddress?.emailAddress}</span>
                         <Link href="/auth/account" className={styles.authButton}>
                             Account
                         </Link>

@@ -3,7 +3,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import styles from "../styles/CreatePostDialog.module.css";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import { useUser } from "@clerk/nextjs";
 
 export function CreatePostDialog() {
     const [open, setOpen] = useState(false);
@@ -11,7 +11,7 @@ export function CreatePostDialog() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
-    const { data: session } = useSession();
+    const { isSignedIn } = useUser();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -62,7 +62,7 @@ export function CreatePostDialog() {
             <Dialog.Portal>
                 <Dialog.Overlay className={styles.overlay} />
                 <Dialog.Content className={styles.content}>
-                    {session ? (
+                    {isSignedIn ? (
                         <>
                             <Dialog.Title className={styles.title}>Create a post</Dialog.Title>
                             <Dialog.Description className={styles.description}>

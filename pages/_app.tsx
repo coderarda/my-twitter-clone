@@ -2,85 +2,94 @@ import { useRouter } from "next/router";
 import "../styles/globals.css";
 import * as NavigationMenu from "@radix-ui/react-navigation-menu";
 import { AppProps } from "next/app";
-import { SessionProvider, useSession, signOut } from "next-auth/react";
-import Link from "next/link";
 import { ThemeToggle } from "../components/ThemeToggle";
-import { Auth0Provider } from "@auth0/nextjs-auth0/client";
+import { ClerkProvider, useUser } from "@clerk/nextjs";
 
 function NavigationContent({ children }: { children: React.ReactNode }) {
     const router = useRouter();
-    const { data: session } = useSession();
+    const { isSignedIn, user } = useUser();
     let str = router.pathname;
 
     return (
-        <Auth0Provider>
-            <div className="rootdiv">
-                <NavigationMenu.Root className="navMenu" orientation="vertical">
-                    <NavigationMenu.List className="navbarList">
-                        <NavigationMenu.Item className="logo">{"<logo>"}</NavigationMenu.Item>
-                        <NavigationMenu.Item className="item">
-                            <NavigationMenu.Link className="link" active={str === "/"} href="/">
-                                Home
-                            </NavigationMenu.Link>
-                        </NavigationMenu.Item>
-                        <NavigationMenu.Item className="item">
+        <div className="rootdiv">
+            <NavigationMenu.Root className="navMenu" orientation="vertical">
+                <NavigationMenu.List className="navbarList">
+                    <NavigationMenu.Item className="logo">{"<logo>"}</NavigationMenu.Item>
+                    <NavigationMenu.Item className="item">
+                        <NavigationMenu.Link className="link" active={str === "/"} href="/">
+                            Home
+                        </NavigationMenu.Link>
+                    </NavigationMenu.Item>
+                    <NavigationMenu.Item className="item">
+                        <NavigationMenu.Link
+                            className="link"
+                            active={str === "/explore"}
+                            href="/explore"
+                        >
+                            Explore
+                        </NavigationMenu.Link>
+                    </NavigationMenu.Item>
+                    <NavigationMenu.Item className="item">
+                        <NavigationMenu.Link
+                            className="link"
+                            active={str === "/notifications"}
+                            href="/notifications"
+                        >
+                            Notifications
+                        </NavigationMenu.Link>
+                    </NavigationMenu.Item>
+                    <NavigationMenu.Item className="item">
+                        {isSignedIn ? (
                             <NavigationMenu.Link
                                 className="link"
-                                active={str === "/explore"}
-                                href="/explore"
+                                active={str.startsWith("/profile")}
+                                href={user?.username ? `/profile/${user.username}` : "/auth/account"}
                             >
-                                Explore
+                                Profile
                             </NavigationMenu.Link>
-                        </NavigationMenu.Item>
-                        <NavigationMenu.Item className="item">
+                        ) : null}
+                    </NavigationMenu.Item>
+                    <NavigationMenu.Item className="item">
+                        {isSignedIn ? (
                             <NavigationMenu.Link
-                                className="link"
-                                active={str === "/notifications"}
-                                href="/notifications"
+                                className="linkButton link"
+                                active={str === "/auth/account"}
+                                href="/auth/account"
                             >
-                                Notifications
+                                Account
                             </NavigationMenu.Link>
-                        </NavigationMenu.Item>
-                        {!session ? (
-                            <NavigationMenu.Item className="item">
-                                <NavigationMenu.Link
-                                    className="link"
-                                    active={str === "/auth/signin"}
-                                    href="/auth/signin"
-                                >
-                                    Sign In
-                                </NavigationMenu.Link>
-                            </NavigationMenu.Item>
                         ) : (
-                            <NavigationMenu.Item className="item">
-                                <NavigationMenu.Link
-                                    className="linkButton link"
-                                    active={str === "/auth/account"}
-                                    href="/auth/account"
-                                >
-                                    Account
-                                </NavigationMenu.Link>
-                            </NavigationMenu.Item>
+                            <NavigationMenu.Link
+                                className="link"
+                                active={str === "/auth/signin" || str === "/auth/signup"}
+                                href="/auth/signin"
+                            >
+                                Log In or Sign Up
+                            </NavigationMenu.Link>
                         )}
-                        <NavigationMenu.Item className="item">
-                            <ThemeToggle className="navThemeToggle" />
-                        </NavigationMenu.Item>
-                    </NavigationMenu.List>
-                </NavigationMenu.Root>
-                {children}
-                <div className="sidebar"></div>
-            </div>
-        </Auth0Provider>
+                    </NavigationMenu.Item>
+                    <NavigationMenu.Item className="item">
+                        <ThemeToggle className="navThemeToggle" />
+                    </NavigationMenu.Item>
+                </NavigationMenu.List>
+            </NavigationMenu.Root>
+            {children}
+            <div className="sidebar"></div>
+        </div>
     );
 }
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+function MyApp({ Component, pageProps }: AppProps) {
     return (
-        <SessionProvider session={session}>
+        <ClerkProvider
+            appearance={{ cssLayerName: "clerk" }}
+            signInUrl="/auth/signin"
+            signUpUrl="/auth/signup"
+        >
             <NavigationContent>
                 <Component {...pageProps} />
             </NavigationContent>
-        </SessionProvider>
+        </ClerkProvider>
     );
 }
 

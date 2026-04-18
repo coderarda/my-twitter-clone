@@ -1,14 +1,13 @@
 import Head from "next/head";
 import React from "react";
 import styles from "../styles/Home.module.css";
-import { HomeHeader } from "components/HomeHeader";
+import { HomeHeader } from "../components/HomeHeader";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 import { Prisma } from "@prisma/client";
 import { GetStaticProps } from "next";
-import { Post } from "components/Post";
-import { CreatePostDialog } from "components/CreatePostDialog";
+import { Post } from "../components/Post";
+import { CreatePostDialog } from "../components/CreatePostDialog";
 // Session is obtained client-side via next-auth hooks when needed
-import { prisma } from "../lib/prisma";
 
 type PostsWithRelations = Prisma.FeedPostsGetPayload<{ include: { user: true, likes: true } }>;
 type PostWithStringDate = Omit<PostsWithRelations, "postDate" | "user" | "likes"> & {
@@ -21,6 +20,7 @@ type PostWithStringDate = Omit<PostsWithRelations, "postDate" | "user" | "likes"
 export const getStaticProps: GetStaticProps<{ posts: PostWithStringDate[] }> = async function () {
     // Allow viewing posts without authentication
     // Users can still sign in to post content
+    const { prisma } = await import("../lib/prisma");
 
     const postsWithLikes = await prisma.feedPosts.findMany({ 
         include: { 
@@ -65,7 +65,7 @@ export default function Home({ posts }: { posts: PostWithStringDate[] }) {
             <main className={styles.mainRoot}>
                 <div className={styles.home}>
                     <div className={styles.homeFeed}>
-                        <HomeHeader />
+                        <HomeHeader pageTitle="Home" />
                         <ScrollArea.Root style={{ height:"100%" }}>
                             <ScrollArea.Viewport className={styles['scroll-area']}>
                                 {posts.map((post) => {

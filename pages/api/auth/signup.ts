@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
-import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient({ 
     adapter: new PrismaPg({ 
@@ -18,15 +17,11 @@ export default async function handler(
     }
 
     try {
-        const { name, lastname, username, email, password } = req.body;
+        const { name, lastname, username, email } = req.body;
 
         // Validation
-        if (!name || !lastname || !username || !email || !password) {
+        if (!name || !lastname || !username || !email) {
             return res.status(400).json({ error: 'All fields are required' });
-        }
-
-        if (password.length < 8) {
-            return res.status(400).json({ error: 'Password must be at least 8 characters' });
         }
 
         // Check if user already exists
@@ -48,9 +43,6 @@ export default async function handler(
             }
         }
 
-        // Hash password
-        const passwordHash = await bcrypt.hash(password, 10);
-
         // Create user
         const user = await prisma.users.create({
             data: {
@@ -58,7 +50,6 @@ export default async function handler(
                 lastname,
                 username,
                 email,
-                passwordHash,
             },
             select: {
                 userId: true,
